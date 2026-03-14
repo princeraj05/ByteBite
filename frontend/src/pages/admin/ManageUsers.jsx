@@ -1,5 +1,5 @@
 // ================= FRONTEND =================
-// ✅ src/pages/admin/ManageUsers.jsx (ONLY UI / STYLING UPDATED)
+// src/pages/admin/ManageUsers.jsx
 
 import { useEffect, useState } from "react";
 import { getToken } from "../../utils/getToken";
@@ -13,7 +13,7 @@ export default function ManageUsers() {
 
   const loadUsers = async () => {
     const token = await getToken();
-    const res = await fetch("http://localhost:5000/api/admin/users", {
+    const res = await fetch("https://food-startup-1.onrender.com/api/admin/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
     setUsers(await res.json());
@@ -21,7 +21,7 @@ export default function ManageUsers() {
 
   const changeStatus = async (id, status) => {
     const token = await getToken();
-    await fetch(`http://localhost:5000/api/admin/users/${id}/status`, {
+    await fetch(`https://food-startup-1.onrender.com/api/admin/users/${id}/status`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
