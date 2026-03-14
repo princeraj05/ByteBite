@@ -1,0 +1,34 @@
+import mongoose from "mongoose";
+
+const orderItemSchema = new mongoose.Schema(
+  {
+    foodId: { type: mongoose.Schema.Types.ObjectId, ref: "Food", required: true },
+    name: String,
+    price: Number,
+    qty: Number,
+    image: String,
+  },
+  { _id: false }
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    userId: { type: String, required: true },
+    items: [orderItemSchema],
+    address: String,
+    phone: String,
+    subtotal: Number,
+    deliveryCharge: Number,
+    total: Number,
+    status: {
+      type: String,
+      enum: ["Pending", "Preparing", "Delivered"],
+      default: "Pending",
+    },
+    etaMinutes: Number,
+    etaSetAt: Date,
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Order", orderSchema);
