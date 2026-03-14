@@ -37,9 +37,7 @@ try{
   navigate(data.role==="admin"?"/admin":"/user");
 
 }catch(err){
-
   alert("Login failed");
-
 }
 ```
 
@@ -83,7 +81,7 @@ return ( <div style={page}> <form style={card} onSubmit={handleLogin}>
 );
 }
 
-/* ================= STYLES ================= */
+/* ===== STYLES ===== */
 
 const page={
 minHeight:"100vh",
