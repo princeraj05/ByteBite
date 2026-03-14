@@ -1,11 +1,11 @@
-import User from "../models/User.js";
+// backend/src/middleware/adminMiddleware.js
 
-export const adminOnly = async (req, res, next) => {
-  const user = await User.findOne({ uid: req.user.uid });
+export const adminOnly = (req, res, next) => {
 
-  if (!user || user.role !== "admin") {
-    return res.status(403).json({ message: "Admin only" });
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ message: "Admin access required" });
   }
 
   next();
+
 };

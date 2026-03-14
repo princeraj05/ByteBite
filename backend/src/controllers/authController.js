@@ -1,23 +1,27 @@
 import User from "../models/User.js";
 
 export const loginUser = async (req, res) => {
-  const { uid, email } = req.user;
 
-  // 1️⃣ Check user in MongoDB
+  const { uid, email, name } = req.user;
+
+  // check user
   let user = await User.findOne({ uid });
 
-  // 2️⃣ If not exists → create
+  // if not exist create
   if (!user) {
+
     user = await User.create({
       uid,
+      name,
       email,
-      role: "user", // default
+      role: "user"
     });
+
   }
 
-  // 3️⃣ Send role to frontend
   res.json({
     success: true,
-    role: user.role,
+    role: user.role
   });
+
 };

@@ -1,13 +1,20 @@
 import express from "express";
-import { getFoods, addFood, deleteFood } from "../controllers/foodController.js";
+import {
+  getFoods,
+  addFood,
+  deleteFood
+} from "../controllers/foodController.js";
+
 import { protect } from "../middleware/authMiddleware.js";
 import { adminOnly } from "../middleware/adminMiddleware.js";
 import { upload } from "../middleware/upload.js";
 
 const router = express.Router();
 
+/* GET ALL FOODS */
 router.get("/", getFoods);
 
+/* ADD FOOD (ADMIN ONLY) */
 router.post(
   "/",
   protect,
@@ -16,6 +23,12 @@ router.post(
   addFood
 );
 
-router.delete("/:id", protect, adminOnly, deleteFood);
+/* DELETE FOOD (ADMIN ONLY) */
+router.delete(
+  "/:id",
+  protect,
+  adminOnly,
+  deleteFood
+);
 
 export default router;

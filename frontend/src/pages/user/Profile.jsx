@@ -1,12 +1,9 @@
 // ================= FRONTEND =================
-// ✅ src/pages/user/Profile.jsx (ONLY UI / STYLING UPDATED – LOGIC SAME)
+// ✅ src/pages/user/Profile.jsx (Firebase removed – MongoDB API used)
 
 import { useEffect, useState } from "react";
-import { auth, db } from "../../firebase/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function Profile() {
-  const user = auth.currentUser;
 
   const [form, setForm] = useState({
     name: "",
@@ -21,30 +18,79 @@ export default function Profile() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
 
-      const snap = await getDoc(doc(db, "users", user.uid));
-      if (snap.exists()) {
-        setForm(snap.data());
+    const fetchProfile = async () => {
+
+      try {
+
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+          "http://localhost:5000/api/users/me",
+          {
+            headers:{
+              Authorization:`Bearer ${token}`
+            }
+          }
+        );
+
+        const data = await res.json();
+
+        if(data){
+
+          setForm({
+            name: data.name || "",
+            phone: data.phone || "",
+            address: data.address || "",
+            foodPreference: data.foodPreference || "",
+            deliveryTime: data.deliveryTime || "",
+            notifications: data.notifications || "",
+          });
+
+        }
+
+      } catch {
+        setMessage("❌ Failed to load profile");
       }
+
       setLoading(false);
+
     };
 
     fetchProfile();
-  }, [user]);
+
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSave = async () => {
+
     try {
-      await updateDoc(doc(db, "users", user.uid), form);
+
+      const token = localStorage.getItem("token");
+
+      await fetch(
+        "http://localhost:5000/api/users/profile",
+        {
+          method:"PUT",
+          headers:{
+            "Content-Type":"application/json",
+            Authorization:`Bearer ${token}`
+          },
+          body:JSON.stringify(form)
+        }
+      );
+
       setMessage("✅ Profile updated successfully");
+
     } catch {
+
       setMessage("❌ Failed to update profile");
+
     }
+
   };
 
   if (loading) return <p style={{ padding: 40 }}>Loading profile...</p>;

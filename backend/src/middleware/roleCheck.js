@@ -1,8 +1,11 @@
+// backend/src/middleware/roleCheck.js
+
 import User from "../models/User.js";
 
 const roleCheck = (role) => {
   return async (req, res, next) => {
     try {
+
       const uid = req.user.uid;
 
       const user = await User.findOne({ uid });
@@ -16,9 +19,12 @@ const roleCheck = (role) => {
       }
 
       next();
+
     } catch (err) {
+
       console.error("Role check error:", err);
       return res.status(500).json({ message: "Role check failed" });
+
     }
   };
 };

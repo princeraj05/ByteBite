@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
-import { auth } from "../firebase/firebaseConfig";
 
 export default function PrivateRoute({ children }) {
-  const user = auth.currentUser;
 
-  if (!user) {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
     return <Navigate to="/login" />;
   }
 

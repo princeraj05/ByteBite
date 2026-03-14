@@ -1,9 +1,4 @@
 import { useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
-import { auth } from "../../firebase/firebaseConfig";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
@@ -43,42 +38,25 @@ export default function Register() {
 =======
     try{
 
-      const userCred = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      await sendEmailVerification(userCred.user);
-
-      await fetch("http://localhost:5000/api/users/register",{
+      const res = await fetch("http://localhost:5000/api/users/register",{
         method:"POST",
         headers:{
           "Content-Type":"application/json"
         },
         body:JSON.stringify({
-          uid:userCred.user.uid,
           name,
-          email
+          email,
+          password
         })
       });
 
-      alert(
-`✅ Registration Successful!
+      const data = await res.json();
 
-A verification email has been sent to:
+      if(!res.ok){
+        return alert(data.message || "Registration failed");
+      }
 
-${email}
-
-📩 Please check:
-• Inbox
-• Spam folder
-• Promotions tab
-
-Click the verification link in the email to activate your account.
-
-After verification you can login.`);
-
+      alert("✅ Registration Successful!");
       navigate("/login");
 
     }catch(err){

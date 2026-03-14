@@ -1,18 +1,29 @@
-import admin from "../firebase/firebaseAdmin.js";
+// backend/src/middleware/authMiddleware.js
 
-export const protect = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+import jwt from "jsonwebtoken";
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token" });
+export const protect = (req, res, next) => {
+
+  const header = req.headers.authorization;
+
+  if (!header || !header.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
   }
+
+  const token = header.split(" ")[1];
 
   try {
-    const token = authHeader.split(" ")[1];
-    const decoded = await admin.auth().verifyIdToken(token);
+
+    const decoded = jwt.verify(token, "SECRET123");
+
     req.user = decoded;
+
     next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
+
+  } catch (err) {
+
+    return res.status(401).json({ message: "Invalid token" });
+
   }
+
 };
