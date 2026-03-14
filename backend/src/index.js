@@ -1,5 +1,5 @@
 // ================= BACKEND =================
-// ✅ backend/src/index.js (FIXED ORDER)
+// backend/src/index.js (FINAL FIX)
 
 import express from "express";
 import cors from "cors";
@@ -15,18 +15,23 @@ import orderRoutes from "./routes/orderRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import adminUserRoutes from "./routes/adminUserRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
-import adminContactRoutes from "./routes/adminContactRoutes.js"; // ✅ KEEP
+import adminContactRoutes from "./routes/adminContactRoutes.js";
 
 dotenv.config();
-connectDB(); // 🔥 MongoDB Atlas connection
+connectDB(); // MongoDB Atlas connection
 
 const app = express();
 
 /* ================= MIDDLEWARE ================= */
 
+// ✅ Allow frontend from Vercel + Localhost
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://food-startup-mu.vercel.app",
+      "https://food-startup-95c3jeqvf-princes-projects-d7be7534.vercel.app"
+    ],
     credentials: true,
   })
 );
@@ -45,13 +50,14 @@ app.use("/api/orders", orderRoutes);
 
 app.use("/api/admin", adminDashboardRoutes);
 app.use("/api/admin/users", adminUserRoutes);
-app.use("/api/admin/contacts", adminContactRoutes); // ✅ FIXED POSITION
+app.use("/api/admin/contacts", adminContactRoutes);
 
 app.use("/api/contact", contactRoutes);
 
 /* ================= SERVER ================= */
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
