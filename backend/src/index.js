@@ -1,5 +1,5 @@
 // ================= BACKEND =================
-// backend/src/index.js (FINAL FIX)
+// backend/src/index.js
 
 import express from "express";
 import cors from "cors";
@@ -18,21 +18,31 @@ import contactRoutes from "./routes/contactRoutes.js";
 import adminContactRoutes from "./routes/adminContactRoutes.js";
 
 dotenv.config();
-connectDB(); // MongoDB Atlas connection
+connectDB();
 
 const app = express();
 
 /* ================= MIDDLEWARE ================= */
 
-// ✅ Allow frontend from Vercel + Localhost
+// ✅ CORS FIX (allow localhost + any vercel domain)
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://food-startup-mu.vercel.app",
-      "https://food-startup-95c3jeqvf-princes-projects-d7be7534.vercel.app"
-    ],
-    credentials: true,
+    origin: function (origin, callback) {
+
+      if (!origin) return callback(null, true);
+
+      if (
+        origin.includes("localhost") ||
+        origin.includes("vercel.app")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   })
 );
 
