@@ -1,219 +1,266 @@
-// ================= FRONTEND =================
-// src/pages/admin/ManageFoods.jsx (API FIXED)
-
 import { useEffect, useState } from "react";
 import { getToken } from "../../utils/getToken";
 
-export default function ManageFoods() {
-  const [foods, setFoods] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    description: "",
-    image: null,
-  });
+const API = "http://localhost:5000";
 
-  useEffect(() => {
-    loadFoods();
-  }, []);
+export default function ManageFoods(){
 
-  const loadFoods = async () => {
-    const res = await fetch("https://food-startup-1.onrender.com/api/foods");
-    const data = await res.json();
-    setFoods(data);
-  };
+const [foods,setFoods] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
-      setForm({ ...form, image: files[0] });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
-  };
+const [form,setForm] = useState({
+name:"",
+price:"",
+description:"",
+image:null
+});
 
-  const addFood = async (e) => {
-    e.preventDefault();
+useEffect(()=>{
+loadFoods();
+},[]);
 
-    if (!form.name || !form.price || !form.description || !form.image) {
-      return alert("All fields required");
-    }
+const loadFoods = async()=>{
 
-    const token = await getToken();
+const res = await fetch(`${API}/api/foods`);
+const data = await res.json();
 
-    const fd = new FormData();
-    fd.append("name", form.name);
-    fd.append("price", form.price);
-    fd.append("description", form.description);
-    fd.append("image", form.image);
+setFoods(data);
 
-    await fetch("https://food-startup-1.onrender.com/api/foods", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: fd,
-    });
+};
 
-    setForm({ name: "", price: "", description: "", image: null });
-    loadFoods();
-  };
+const handleChange = (e)=>{
 
-  const deleteFood = async (id) => {
-    const token = await getToken();
-    if (!window.confirm("Delete this food?")) return;
+const {name,value,files} = e.target;
 
-    await fetch(`https://food-startup-1.onrender.com/api/foods/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    loadFoods();
-  };
-
-  return (
-    <div style={page}>
-      <h1 style={title}>🍔 Manage Foods</h1>
-
-      {/* ADD FOOD */}
-      <form style={card} onSubmit={addFood}>
-        <h3 style={cardTitle}>Add New Food</h3>
-
-        <input
-          style={input}
-          name="name"
-          placeholder="Food name"
-          value={form.name}
-          onChange={handleChange}
-        />
-
-        <input
-          style={input}
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
-        />
-
-        <textarea
-          style={{ ...input, height: 80 }}
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-        />
-
-        <input style={input} name="image" type="file" onChange={handleChange} />
-
-        <button style={btn} type="submit">
-          ➕ Add Food
-        </button>
-      </form>
-
-      {/* FOOD LIST */}
-      <div style={list}>
-        {foods.map((f) => (
-          <div key={f._id} style={row}>
-            <img
-              src={`https://food-startup-1.onrender.com/uploads/${f.image}`}
-              alt={f.name}
-              style={img}
-            />
-
-            <div style={{ flex: 1 }}>
-              <h3 style={{ margin: 0 }}>{f.name}</h3>
-              <p style={{ margin: "6px 0", color: "#475569" }}>
-                {f.description}
-              </p>
-              <b style={{ color: "#14532d" }}>₹{f.price}</b>
-            </div>
-
-            <button style={delBtn} onClick={() => deleteFood(f._id)}>
-              ❌ Delete
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+if(name==="image"){
+setForm({...form,image:files[0]});
+}else{
+setForm({...form,[name]:value});
 }
 
-/* ================= STYLES ================= */
-
-const page = {
-  padding: 40,
-  background: "#f1f5f9",
-  minHeight: "100vh",
 };
 
-const title = {
-  marginBottom: 30,
-  color: "#0f172a",
+const addFood = async(e)=>{
+
+e.preventDefault();
+
+if(!form.name || !form.price || !form.description || !form.image){
+alert("All fields required");
+return;
+}
+
+const token = await getToken();
+
+const fd = new FormData();
+
+fd.append("name",form.name);
+fd.append("price",form.price);
+fd.append("description",form.description);
+fd.append("image",form.image);
+
+await fetch(`${API}/api/foods`,{
+method:"POST",
+headers:{Authorization:`Bearer ${token}`},
+body:fd
+});
+
+setForm({
+name:"",
+price:"",
+description:"",
+image:null
+});
+
+loadFoods();
+
 };
 
-const card = {
-  background: "#ffffff",
-  padding: 24,
-  borderRadius: 18,
-  maxWidth: 420,
-  boxShadow:
-    "rgba(0, 0, 0, 0.1) 0px 10px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px",
+const deleteFood = async(id)=>{
+
+const token = await getToken();
+
+if(!window.confirm("Delete this food?")) return;
+
+await fetch(`${API}/api/foods/${id}`,{
+method:"DELETE",
+headers:{Authorization:`Bearer ${token}`}
+});
+
+loadFoods();
+
 };
 
-const cardTitle = {
-  marginBottom: 16,
-  color: "#14532d",
-};
+return(
 
-const input = {
-  width: "100%",
-  padding: 12,
-  marginBottom: 12,
-  borderRadius: 10,
-  border: "1px solid #cbd5e1",
-  fontSize: 14,
-};
+<div style={page}>
 
-const btn = {
-  width: "100%",
-  padding: 12,
-  borderRadius: 12,
-  border: "none",
-  cursor: "pointer",
-  fontWeight: 700,
-  background: "#16a34a",
-  color: "#ffffff",
-};
+<h2 style={title}>🍔 Manage Foods</h2>
 
-const list = {
-  marginTop: 40,
-  maxWidth: 900,
-};
+{/* ADD FOOD FORM */}
 
-const row = {
-  display: "flex",
-  gap: 16,
-  alignItems: "center",
-  marginBottom: 20,
-  background: "#ffffff",
-  padding: 18,
-  borderRadius: 18,
-  boxShadow:
-    "rgba(0, 0, 0, 0.08) 0px 8px 20px, rgba(0, 0, 0, 0.04) 0px 4px 10px",
-};
+<form style={formBox} onSubmit={addFood}>
 
-const img = {
-  width: 90,
-  height: 90,
-  borderRadius: 14,
-  objectFit: "cover",
-};
+<input
+style={input}
+name="name"
+placeholder="Food name"
+value={form.name}
+onChange={handleChange}
+/>
 
-const delBtn = {
-  background: "#ef4444",
-  color: "#fff",
-  border: "none",
-  padding: "8px 14px",
-  borderRadius: 10,
-  cursor: "pointer",
-  fontWeight: 600,
-};
+<input
+style={input}
+name="price"
+type="number"
+placeholder="Price"
+value={form.price}
+onChange={handleChange}
+/>
+
+<textarea
+style={textarea}
+name="description"
+placeholder="Description"
+value={form.description}
+onChange={handleChange}
+/>
+
+<input
+style={file}
+name="image"
+type="file"
+onChange={handleChange}
+/>
+
+<button style={btn} type="submit">
+Add Food
+</button>
+
+</form>
+
+{/* FOOD LIST */}
+
+<div style={grid}>
+
+{foods.map(f=>(
+
+<div key={f._id} style={card}>
+
+<img
+src={`${API}/uploads/${f.image}`}
+style={image}
+/>
+
+<h3>{f.name}</h3>
+
+<p style={desc}>{f.description}</p>
+
+<p style={price}>₹{f.price}</p>
+
+<button
+style={deleteBtn}
+onClick={()=>deleteFood(f._id)}
+>
+Delete
+</button>
+
+</div>
+
+))}
+
+</div>
+
+</div>
+
+)
+
+}
+
+/* styles */
+
+const page={
+maxWidth:1200,
+margin:"0 auto"
+}
+
+const title={
+marginBottom:20,
+fontSize:24,
+fontWeight:800
+}
+
+const formBox={
+background:"#fff",
+padding:20,
+borderRadius:14,
+boxShadow:"0 6px 20px rgba(0,0,0,0.08)",
+display:"flex",
+flexDirection:"column",
+gap:12,
+marginBottom:30
+}
+
+const input={
+padding:10,
+borderRadius:8,
+border:"1px solid #cbd5e1"
+}
+
+const textarea={
+padding:10,
+borderRadius:8,
+border:"1px solid #cbd5e1"
+}
+
+const file={
+padding:6
+}
+
+const btn={
+background:"#16a34a",
+color:"#fff",
+padding:"10px",
+border:"none",
+borderRadius:8,
+cursor:"pointer",
+fontWeight:600
+}
+
+const grid={
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
+gap:20
+}
+
+const card={
+background:"#fff",
+padding:16,
+borderRadius:14,
+boxShadow:"0 6px 20px rgba(0,0,0,0.08)",
+textAlign:"center"
+}
+
+const image={
+width:"100%",
+height:150,
+objectFit:"cover",
+borderRadius:10
+}
+
+const desc={
+fontSize:14,
+color:"#64748b"
+}
+
+const price={
+fontWeight:700,
+margin:"6px 0"
+}
+
+const deleteBtn={
+background:"#ef4444",
+color:"#fff",
+border:"none",
+padding:"8px 12px",
+borderRadius:8,
+cursor:"pointer"
+}

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export default function AdminRoute({ children }) {
 
@@ -11,7 +11,7 @@ export default function AdminRoute({ children }) {
 
   try {
 
-    const decoded = jwt_decode(token);
+    const decoded = jwtDecode(token);
 
     if (decoded.role !== "admin") {
       return <Navigate to="/user" />;

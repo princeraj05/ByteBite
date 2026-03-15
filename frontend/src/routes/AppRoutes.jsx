@@ -28,56 +28,93 @@ import ManageOrders from "../pages/admin/ManageOrders";
 import ManageUsers from "../pages/admin/ManageUsers";
 import Contacts from "../pages/admin/Contacts";
 
-/* GUARDS */
+/* ROUTE GUARDS */
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 
 export default function AppRoutes() {
-  return (
-    <Routes>
-      <Route element={<CommonLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Route>
 
-      <Route
-        path="/user"
-        element={
-          <PrivateRoute>
-            <UserLayout />
-          </PrivateRoute>
-        }
-      >
-        <Route index element={<UserDashboard />} />
-        <Route path="menu" element={<Menu />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="checkout" element={<Checkout />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="contact" element={<UserContact />} />
-      </Route>
+return (
 
-      <Route
-        path="/admin"
-        element={
-          <PrivateRoute>
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          </PrivateRoute>
-        }
-      >
-        <Route index element={<AdminDashboard />} />
-        <Route path="foods" element={<ManageFoods />} />
-        <Route path="orders" element={<ManageOrders />} />
-        <Route path="users" element={<ManageUsers />} />
-        <Route path="contacts" element={<Contacts />} />
-      </Route>
+<Routes>
 
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  );
+{/* PUBLIC WEBSITE WITH NAVBAR + FOOTER */}
+
+<Route element={<CommonLayout />}>
+
+<Route path="/" element={<Home />} />
+
+<Route path="/about" element={<About />} />
+
+<Route path="/contact" element={<Contact />} />
+
+<Route path="/login" element={<Login />} />
+
+<Route path="/register" element={<Register />} />
+
+</Route>
+
+
+{/* USER PANEL */}
+
+<Route
+path="/user"
+element={
+<PrivateRoute>
+<UserLayout />
+</PrivateRoute>
+}
+>
+
+<Route index element={<UserDashboard />} />
+
+<Route path="menu" element={<Menu />} />
+
+<Route path="cart" element={<Cart />} />
+
+<Route path="checkout" element={<Checkout />} />
+
+<Route path="orders" element={<Orders />} />
+
+<Route path="profile" element={<Profile />} />
+
+<Route path="contact" element={<UserContact />} />
+
+</Route>
+
+
+{/* ADMIN PANEL */}
+
+<Route
+path="/admin"
+element={
+<PrivateRoute>
+<AdminRoute>
+<AdminLayout />
+</AdminRoute>
+</PrivateRoute>
+}
+>
+
+<Route index element={<AdminDashboard />} />
+
+<Route path="foods" element={<ManageFoods />} />
+
+<Route path="orders" element={<ManageOrders />} />
+
+<Route path="users" element={<ManageUsers />} />
+
+<Route path="contacts" element={<Contacts />} />
+
+</Route>
+
+
+{/* FALLBACK */}
+
+<Route path="*" element={<Navigate to="/" />} />
+
+</Routes>
+
+);
+
 }

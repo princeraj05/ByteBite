@@ -1,5 +1,5 @@
 // ================= FRONTEND =================
-// ✅ src/pages/user/Cart.jsx (ONLY UI / STYLING UPDATED)
+// ✅ src/pages/user/Cart.jsx (RESPONSIVE + IMPROVED UI)
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -45,15 +45,17 @@ export default function Cart() {
             style={img}
           />
 
-          <div style={{ flex: 1 }}>
-            <h3 style={{ margin: 0 }}>{item.name}</h3>
+          <div style={info}>
+            <h3 style={name}>{item.name}</h3>
             <p style={price}>₹{item.price}</p>
 
             <div style={qtyBox}>
               <button style={qtyBtn} onClick={() => updateQty(item._id, "dec")}>
                 −
               </button>
+
               <span style={qty}>{item.qty}</span>
+
               <button style={qtyBtn} onClick={() => updateQty(item._id, "inc")}>
                 +
               </button>
@@ -69,6 +71,7 @@ export default function Cart() {
       {cart.length > 0 && (
         <div style={summary}>
           <h2 style={total}>Total: ₹{subtotal}</h2>
+
           <button
             onClick={() => navigate("/user/checkout")}
             style={checkoutBtn}
@@ -84,15 +87,15 @@ export default function Cart() {
 /* ================= STYLES ================= */
 
 const page = {
-  padding: 40,
-  maxWidth: 900,
+  padding: "30px 20px",
+  maxWidth: 1000,
   margin: "auto",
-  background: "#f1f5f9",
   minHeight: "100vh",
+  background: "#f8fafc",
 };
 
 const title = {
-  marginBottom: 24,
+  marginBottom: 25,
   color: "#0f172a",
 };
 
@@ -104,19 +107,29 @@ const card = {
   display: "flex",
   alignItems: "center",
   gap: 20,
+  flexWrap: "wrap",
   background: "#ffffff",
-  padding: 20,
-  borderRadius: 18,
-  boxShadow:
-    "rgba(0, 0, 0, 0.08) 0px 10px 25px, rgba(0, 0, 0, 0.04) 0px 5px 10px",
+  padding: 18,
+  borderRadius: 16,
+  boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
   marginBottom: 16,
 };
 
 const img = {
-  width: 100,
-  height: 100,
+  width: 90,
+  height: 90,
   objectFit: "cover",
-  borderRadius: 14,
+  borderRadius: 12,
+};
+
+const info = {
+  flex: 1,
+  minWidth: 180,
+};
+
+const name = {
+  margin: 0,
+  fontSize: 18,
 };
 
 const price = {
@@ -128,15 +141,14 @@ const qtyBox = {
   display: "flex",
   alignItems: "center",
   gap: 10,
-  marginTop: 6,
 };
 
 const qtyBtn = {
   width: 32,
   height: 32,
   borderRadius: 8,
-  border: "1px solid #cbd5e1",
-  background: "#f8fafc",
+  border: "1px solid #e2e8f0",
+  background: "#f1f5f9",
   cursor: "pointer",
   fontWeight: 700,
 };
@@ -149,29 +161,33 @@ const qty = {
 
 const removeBtn = {
   border: "none",
-  background: "transparent",
-  color: "#ef4444",
+  background: "#fee2e2",
+  color: "#dc2626",
+  padding: "8px 14px",
+  borderRadius: 8,
   cursor: "pointer",
   fontWeight: 600,
 };
 
 const summary = {
-  marginTop: 24,
-  paddingTop: 16,
-  borderTop: "1px solid #e5e7eb",
+  marginTop: 30,
+  padding: 20,
+  background: "#ffffff",
+  borderRadius: 16,
+  boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
 };
 
 const total = {
   marginBottom: 16,
-  color: "#14532d",
+  color: "#166534",
 };
 
 const checkoutBtn = {
   width: "100%",
-  padding: 16,
-  borderRadius: 14,
+  padding: 14,
+  borderRadius: 12,
   border: "none",
-  background: "linear-gradient(90deg,#22c55e,#16a34a)",
+  background: "linear-gradient(135deg,#22c55e,#16a34a)",
   color: "#ffffff",
   fontSize: 16,
   fontWeight: 700,

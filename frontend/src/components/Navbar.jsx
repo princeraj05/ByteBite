@@ -1,65 +1,109 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
-export default function Navbar() {
-  return (
-    <nav style={nav}>
-      <div style={logo}>🍔 FoodStartup</div>
+export default function Navbar(){
 
-      <div style={links}>
-        <NavLink to="/" style={link}>Home</NavLink>
-        <NavLink to="/about" style={link}>About</NavLink>
-        <NavLink to="/contact" style={link}>Contact</NavLink>
-        <NavLink to="/login" style={link}>Login</NavLink>
-      </div>
-    </nav>
-  );
+const [open,setOpen] = useState(false);
+
+return(
+
+<nav style={nav}>
+
+<div style={logo}>
+🍔 FoodStartup
+</div>
+
+<button
+style={menuBtn}
+onClick={()=>setOpen(!open)}
+>
+☰
+</button>
+
+<div
+style={{
+...links,
+display: open ? "flex" : ""
+}}
+>
+
+<NavLink to="/" style={link} onClick={()=>setOpen(false)}>Home</NavLink>
+
+<NavLink to="/about" style={link} onClick={()=>setOpen(false)}>About</NavLink>
+
+<NavLink to="/contact" style={link} onClick={()=>setOpen(false)}>Contact</NavLink>
+
+<NavLink to="/login" style={link} onClick={()=>setOpen(false)}>Login</NavLink>
+
+</div>
+
+</nav>
+
+)
+
 }
 
-/* ================= STYLES ================= */
+/* styles */
 
-const nav = {
-  height: 64,
-  padding: "0 40px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+const nav={
+width:"100%",
+height:60,
+display:"flex",
+alignItems:"center",
+justifyContent:"space-between",
+padding:"0 20px",
+background:"#ffffff",
+borderBottom:"1px solid #e5e7eb",
+boxSizing:"border-box",
+position:"sticky",
+top:0,
+zIndex:1000
+}
 
-  background: "#f0f0f0",
-  borderBottom: "1px solid #d4d4d4",
+const logo={
+fontSize:20,
+fontWeight:700,
+whiteSpace:"nowrap"
+}
 
-  /* 🔥 FIX GAP + STICKY */
-  position: "sticky",
-  top: 0,
-  left: 0,
-  right: 0,
-  zIndex: 1000,
+const links={
+display:"flex",
+gap:20,
+alignItems:"center"
+}
 
-  /* 🔥 STRONG SHADOW */
-  boxShadow:
-    "rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px",
-};
+const menuBtn={
+display:"none",
+fontSize:24,
+border:"none",
+background:"transparent",
+cursor:"pointer"
+}
 
-const logo = {
-  fontSize: 20,
-  fontWeight: 700,
-  color: "#111827",
-};
+const link=({isActive})=>({
 
-const links = {
-  display: "flex",
-  gap: 24,
-};
+textDecoration:"none",
+color:isActive ? "#16a34a" : "#374151",
+fontWeight:600,
+padding:"6px 10px",
+borderRadius:6,
+background:isActive ? "#f0fdf4" : "transparent"
 
-const link = ({ isActive }) => ({
-  textDecoration: "none",
-  color: "#374151",
-  fontWeight: 500,
-  padding: "8px 14px",
-  borderRadius: 8,
-  transition: "all 0.2s ease",
+})
 
-  background: isActive ? "#ffffff" : "transparent",
-  boxShadow: isActive
-    ? "0 6px 18px rgba(0,0,0,0.15)"
-    : "none",
-});
+/* MOBILE */
+
+if(window.innerWidth < 768){
+
+links.flexDirection="column"
+links.position="absolute"
+links.top=60
+links.left=0
+links.right=0
+links.background="#ffffff"
+links.padding=20
+links.display="none"
+
+menuBtn.display="block"
+
+}

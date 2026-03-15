@@ -1,141 +1,144 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const API = "https://food-startup-1.onrender.com"; // backend url
+const API = "http://localhost:5000";
 
-export default function Login() {
+export default function Login(){
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
 
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+const handleLogin = async(e)=>{
 
-    e.preventDefault();
+e.preventDefault();
 
-    try {
+try{
 
-      const res = await fetch(`${API}/api/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
+const res = await fetch(`${API}/api/users/login`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({ email,password })
+});
 
-      const data = await res.json();
+const data = await res.json();
 
-      if (!res.ok) {
-        alert(data.message || "Login failed");
-        return;
-      }
+if(!res.ok){
+alert(data.message || "Login failed");
+return;
+}
 
-      localStorage.setItem("token", data.token);
+localStorage.setItem("token",data.token);
 
-      if (data.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/user");
-      }
+if(data.role==="admin"){
+navigate("/admin");
+}else{
+navigate("/user");
+}
 
-    } catch (err) {
+}catch(err){
+alert("Server error");
+}
 
-      console.error(err);
-      alert("Server error");
+};
 
-    }
+return(
 
-  };
+<div style={page}>
 
-  return (
+<form style={card} onSubmit={handleLogin}>
 
-    <div style={page}>
+<h2 style={title}>Login</h2>
 
-      <form style={card} onSubmit={handleLogin}>
+<input
+style={input}
+type="email"
+placeholder="Email address"
+value={email}
+required
+onChange={(e)=>setEmail(e.target.value)}
+/>
 
-        <h2 style={title}>Login</h2>
+<input
+style={input}
+type="password"
+placeholder="Password"
+value={password}
+required
+onChange={(e)=>setPassword(e.target.value)}
+/>
 
-        <input
-          style={input}
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e)=>setEmail(e.target.value)}
-        />
+<button style={btn} type="submit">
+Login
+</button>
 
-        <input
-          style={input}
-          type="password"
-          placeholder="Password"
-          value={password}
-          required
-          onChange={(e)=>setPassword(e.target.value)}
-        />
+<p style={text}>
+New user? <Link to="/register">Create account</Link>
+</p>
 
-        <button style={btn} type="submit">
-          Login
-        </button>
+</form>
 
-        <p style={text}>
-          New user? <Link to="/register">Register</Link>
-        </p>
+</div>
 
-      </form>
-
-    </div>
-
-  );
+)
 
 }
 
 /* styles */
 
 const page={
-  minHeight:"100vh",
-  display:"flex",
-  justifyContent:"center",
-  alignItems:"center",
-  background:"#f1f5f9"
+width:"100%",
+minHeight:"calc(100vh - 120px)",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+padding:"20px",
+background:"#f9fafb",
+boxSizing:"border-box"
 };
 
 const card={
-  width:360,
-  padding:32,
-  borderRadius:14,
-  background:"#ffffff",
-  boxShadow:"0 12px 30px rgba(0,0,0,0.15)"
+width:"100%",
+maxWidth:380,
+background:"#ffffff",
+padding:"30px 24px",
+borderRadius:14,
+boxShadow:"0 8px 25px rgba(0,0,0,0.08)"
 };
 
 const title={
-  textAlign:"center",
-  marginBottom:20
+textAlign:"center",
+marginBottom:22,
+fontSize:24
 };
 
 const input={
-  width:"100%",
-  padding:12,
-  marginBottom:12,
-  borderRadius:8,
-  border:"1px solid #d1d5db"
+width:"100%",
+padding:12,
+marginBottom:14,
+borderRadius:8,
+border:"1px solid #d1d5db",
+fontSize:14,
+boxSizing:"border-box"
 };
 
 const btn={
-  width:"100%",
-  padding:12,
-  borderRadius:8,
-  border:"none",
-  cursor:"pointer",
-  fontWeight:"bold",
-  background:"#111827",
-  color:"#fff"
+width:"100%",
+padding:12,
+borderRadius:8,
+border:"none",
+cursor:"pointer",
+fontWeight:600,
+background:"#16a34a",
+color:"#fff",
+fontSize:15
 };
 
 const text={
-  marginTop:12,
-  textAlign:"center"
+marginTop:14,
+textAlign:"center",
+fontSize:14
 };

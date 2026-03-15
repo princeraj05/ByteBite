@@ -1,173 +1,199 @@
-// ================= FRONTEND =================
-// src/pages/user/Menu.jsx (SEARCH FEATURE ADDED – UI SAME)
-
 import { useEffect, useState } from "react";
 
-export default function Menu() {
-  const [foods, setFoods] = useState([]);
-  const [search, setSearch] = useState(""); // 🔍 NEW
+const API = "http://localhost:5000";
 
-  useEffect(() => {
-    fetch("https://food-startup-1.onrender.com/api/foods")
-      .then((res) => res.json())
-      .then((data) => setFoods(data));
-  }, []);
+export default function Menu(){
 
-  // 🔍 FILTER LOGIC (NEW)
-  const filteredFoods = foods.filter((food) =>
-    food.name.toLowerCase().includes(search.toLowerCase()) ||
-    food.description.toLowerCase().includes(search.toLowerCase())
-  );
+const [foods,setFoods] = useState([]);
+const [search,setSearch] = useState("");
 
-  const addToCart = (food) => {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+useEffect(()=>{
+loadFoods();
+},[]);
 
-    const existing = cart.find((item) => item._id === food._id);
+const loadFoods = async()=>{
 
-    if (existing) {
-      existing.qty += 1;
-    } else {
-      cart.push({
-        _id: food._id,
-        name: food.name,
-        price: food.price,
-        image: food.image,
-        qty: 1,
-      });
-    }
+const res = await fetch(`${API}/api/foods`);
+const data = await res.json();
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Added to cart");
-  };
+setFoods(data);
 
-  return (
-    <div style={page}>
-      <h1 style={title}>🍽 Our Menu</h1>
+};
 
-      {/* 🔍 SEARCH BOX (NEW FEATURE) */}
-      <input
-        type="text"
-        placeholder="🔍 Search food..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={searchBox}
-      />
+const filteredFoods = foods.filter(food =>
+food.name.toLowerCase().includes(search.toLowerCase()) ||
+(food.description || "").toLowerCase().includes(search.toLowerCase())
+);
 
-      <div style={grid}>
-        {filteredFoods.length === 0 ? (
-          <p>No food found</p>
-        ) : (
-          filteredFoods.map((food) => (
-            <div key={food._id} style={card}>
-              <img
-                src={`https://food-startup-1.onrender.com/uploads/${food.image}`}
-                alt={food.name}
-                style={img}
-              />
+const addToCart = (food)=>{
 
-              <div style={content}>
-                <h3 style={name}>{food.name}</h3>
-                <p style={desc}>{food.description}</p>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-                <div style={bottom}>
-                  <span style={price}>₹{food.price}</span>
-                  <button style={btn} onClick={() => addToCart(food)}>
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
+const existing = cart.find(i=>i._id===food._id);
+
+if(existing){
+existing.qty += 1;
+}else{
+cart.push({
+_id:food._id,
+name:food.name,
+price:food.price,
+image:food.image,
+qty:1
+});
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("Added to cart");
+
+};
+
+return(
+
+<div style={page}>
+
+<h1 style={title}>🍽 Our Menu</h1>
+
+<input
+type="text"
+placeholder="🔍 Search food..."
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+style={searchBox}
+/>
+
+<div style={grid}>
+
+{filteredFoods.length===0 ? (
+
+<p>No food found</p>
+
+) : (
+
+filteredFoods.map(food=>(
+
+<div key={food._id} style={card}>
+
+<img
+src={`${API}/uploads/${food.image}`}
+alt={food.name}
+style={img}
+/>
+
+<div style={content}>
+
+<h3 style={name}>{food.name}</h3>
+
+<p style={desc}>{food.description}</p>
+
+<div style={bottom}>
+
+<span style={price}>₹{food.price}</span>
+
+<button
+style={btn}
+onClick={()=>addToCart(food)}
+>
+Add to Cart
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+))
+
+)}
+
+</div>
+
+</div>
+
+);
+
 }
 
 /* ================= STYLES ================= */
 
-const page = {
-  padding: 40,
-  background: "#f1f5f9",
-  minHeight: "100vh",
+const page={
+padding:"30px 20px",
+background:"#f8fafc",
+minHeight:"100vh",
+maxWidth:1000,
+margin:"auto"
 };
 
-const title = {
-  marginBottom: 20,
-  color: "#0f172a",
+const title={
+marginBottom:24,
+color:"#0f172a"
 };
 
-/* 🔍 SEARCH BOX STYLE (MINIMAL – UI SAME) */
-const searchBox = {
-  width: "100%",
-  maxWidth: 350,
-  padding: "10px 14px",
-  borderRadius: 12,
-  border: "1px solid #cbd5e1",
-  marginBottom: 30,
-  fontSize: 15,
-  outline: "none",
+const searchBox={
+width:"100%",
+maxWidth:400,
+padding:"12px 14px",
+borderRadius:12,
+border:"1px solid #e2e8f0",
+marginBottom:26,
+boxSizing:"border-box"
 };
 
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-  gap: 24,
+const grid={
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
+gap:20
 };
 
-const card = {
-  background: "#ffffff",
-  borderRadius: 20,
-  overflow: "hidden",
-  boxShadow:
-    "rgba(0, 0, 0, 0.12) 0px 10px 25px, rgba(0, 0, 0, 0.06) 0px 5px 10px",
-  display: "flex",
-  flexDirection: "column",
+const card={
+background:"#fff",
+borderRadius:18,
+overflow:"hidden",
+boxShadow:"0 10px 25px rgba(0,0,0,0.08)"
 };
 
-const img = {
-  width: "100%",
-  height: 160,
-  objectFit: "cover",
+const img={
+width:"100%",
+height:170,
+objectFit:"cover"
 };
 
-const content = {
-  padding: 16,
-  display: "flex",
-  flexDirection: "column",
-  flex: 1,
+const content={
+padding:16
 };
 
-const name = {
-  margin: "0 0 6px",
-  color: "#0f172a",
+const name={
+margin:"0 0 6px"
 };
 
-const desc = {
-  flex: 1,
-  fontSize: 14,
-  color: "#64748b",
-  marginBottom: 12,
+const desc={
+fontSize:14,
+color:"#64748b",
+minHeight:36
 };
 
-const bottom = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+const bottom={
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+marginTop:12,
+flexWrap:"wrap",
+gap:8
 };
 
-const price = {
-  fontSize: 16,
-  fontWeight: 700,
-  color: "#14532d",
+const price={
+fontWeight:700,
+color:"#166534"
 };
 
-const btn = {
-  padding: "8px 14px",
-  borderRadius: 12,
-  border: "none",
-  cursor: "pointer",
-  fontWeight: 600,
-  background: "linear-gradient(135deg,#22c55e,#16a34a)",
-  color: "#ffffff",
+const btn={
+padding:"8px 14px",
+borderRadius:10,
+border:"none",
+cursor:"pointer",
+background:"#16a34a",
+color:"#fff",
+fontSize:13
 };

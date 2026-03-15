@@ -1,177 +1,218 @@
-// ================= FRONTEND =================
-// ✅ src/pages/admin/AdminLayout.jsx (HOVER + UI IMPROVED)
-
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getToken } from "../../utils/getToken";
 
-export default function AdminLayout() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
+export default function AdminLayout(){
 
-  useEffect(() => {
-    loadAdmin();
-  }, []);
+const navigate = useNavigate();
 
-  const loadAdmin = async () => {
-    const token = await getToken();
-    if (!token) return;
+const [name,setName] = useState("");
+const [open,setOpen] = useState(false);
 
-    const res = await fetch("http://localhost:5000/api/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+useEffect(()=>{
+loadAdmin();
+},[]);
 
-    const data = await res.json();
-    setName(data.name);
-  };
+const loadAdmin = async()=>{
 
-  return (
-    <div style={layout}>
-      {/* SIDEBAR */}
-      <aside style={sidebar}>
-        <h2 style={brand}>🍔 Food Startup</h2>
+const token = await getToken();
+if(!token) return;
 
-        <div style={adminBox}>
-          👨‍💼 <span style={adminName}>{name || "Admin"}</span>
-        </div>
+const res = await fetch("http://localhost:5000/api/users/me",{
+headers:{Authorization:`Bearer ${token}`}
+});
 
-        <nav style={nav}>
-          <NavItem to="/admin" end>🏠 Dashboard</NavItem>
-          <NavItem to="/admin/foods">🍔 Manage Foods</NavItem>
-          <NavItem to="/admin/orders">📦 Manage Orders</NavItem>
-          <NavItem to="/admin/users">👥 Manage Users</NavItem>
-          <NavItem to="/admin/contacts">📩 User Contacts</NavItem>
-        </nav>
+const data = await res.json();
+setName(data.name);
 
-        <button
-          style={logoutBtn}
-          onMouseEnter={(e) => (e.target.style.boxShadow = dangerShadow)}
-          onMouseLeave={(e) => (e.target.style.boxShadow = "none")}
-          onClick={() => navigate("/login")}
-        >
-          🚪 Logout
-        </button>
-      </aside>
+};
 
-      {/* MAIN */}
-      <main style={main}>
-        <div style={pageCard}>
-          <Outlet />
-        </div>
-      </main>
-    </div>
-  );
+return(
+
+<div style={layout}>
+
+{/* OVERLAY */}
+
+{open && (
+<div
+style={overlay}
+onClick={()=>setOpen(false)}
+></div>
+)}
+
+{/* SIDEBAR */}
+
+<div
+style={{
+...sidebar,
+transform: open ? "translateX(0)" : "translateX(-100%)"
+}}
+>
+
+<h2 style={brand}>🍔 FoodStartup</h2>
+
+<p style={admin}>👨‍💼 {name || "Admin"}</p>
+
+<nav style={nav}>
+
+<NavItem to="/admin" end close={()=>setOpen(false)}>Dashboard</NavItem>
+<NavItem to="/admin/foods" close={()=>setOpen(false)}>Foods</NavItem>
+<NavItem to="/admin/orders" close={()=>setOpen(false)}>Orders</NavItem>
+<NavItem to="/admin/users" close={()=>setOpen(false)}>Users</NavItem>
+<NavItem to="/admin/contacts" close={()=>setOpen(false)}>Contacts</NavItem>
+
+</nav>
+
+<button
+style={logout}
+onClick={()=>navigate("/login")}
+>
+Logout
+</button>
+
+</div>
+
+{/* MAIN */}
+
+<div style={main}>
+
+{/* TOPBAR */}
+
+<div style={topbar}>
+
+<button
+style={menuBtn}
+onClick={()=>setOpen(!open)}
+>
+☰
+</button>
+
+<h3 style={{margin:0}}>Admin Panel</h3>
+
+</div>
+
+<div style={content}>
+<Outlet/>
+</div>
+
+</div>
+
+</div>
+
+)
+
 }
 
-/* ================= COMPONENT ================= */
+/* NAV ITEM */
 
-function NavItem({ to, end, children }) {
-  const [hover, setHover] = useState(false);
+function NavItem({to,end,children,close}){
 
-  return (
-    <NavLink
-      to={to}
-      end={end}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={({ isActive }) => ({
-        ...navLink,
-        background: isActive
-          ? "linear-gradient(135deg,#22c55e,#16a34a)"
-          : hover
-          ? "rgba(255,255,255,0.08)"
-          : "transparent",
-        boxShadow: hover
-          ? "rgba(0,0,0,0.35) 0px 8px 20px"
-          : "none",
-        transform: hover ? "translateX(4px)" : "none",
-        color: isActive ? "#fff" : "#e5e7eb",
-      })}
-    >
-      {children}
-    </NavLink>
-  );
+return(
+
+<NavLink
+to={to}
+end={end}
+onClick={close}
+style={({isActive})=>({
+padding:"12px 16px",
+borderRadius:8,
+textDecoration:"none",
+color:isActive ? "#fff" : "#d1d5db",
+background:isActive ? "#16a34a" : "transparent"
+})}
+>
+{children}
+</NavLink>
+
+)
+
 }
 
-/* ================= STYLES ================= */
+/* styles */
 
-const layout = {
-  display: "flex",
-  minHeight: "100vh",
-  background: "linear-gradient(135deg,#f0fdf4,#ecfeff,#eef2ff)",
-};
+const layout={
+display:"flex",
+minHeight:"100vh"
+}
 
-const sidebar = {
-  width: 280,
-  padding: "26px 22px",
-  background: "linear-gradient(180deg,#020617,#0f172a)",
-  color: "#fff",
-  display: "flex",
-  flexDirection: "column",
-  boxShadow: "rgba(0,0,0,0.45) 6px 0px 30px",
-};
+const overlay={
+position:"fixed",
+top:0,
+left:0,
+right:0,
+bottom:0,
+background:"rgba(0,0,0,0.4)",
+zIndex:900
+}
 
-const brand = {
-  fontSize: 22,
-  fontWeight: 800,
-  marginBottom: 24,
-  background: "linear-gradient(90deg,#22c55e,#38bdf8)",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-};
+const sidebar={
+position:"fixed",
+top:0,
+left:0,
+bottom:0,
+width:260,
+background:"#111827",
+padding:20,
+color:"#fff",
+display:"flex",
+flexDirection:"column",
+gap:20,
+transition:"transform 0.3s ease",
+zIndex:1000
+}
 
-const adminBox = {
-  marginBottom: 32,
-  padding: "14px 16px",
-  borderRadius: 16,
-  background: "rgba(255,255,255,0.08)",
-  boxShadow: "rgba(0,0,0,0.35) 0px 10px 25px",
-};
+const brand={
+fontSize:20,
+fontWeight:700
+}
 
-const adminName = {
-  fontWeight: 700,
-  color: "#a7f3d0",
-};
+const admin={
+fontSize:14,
+color:"#9ca3af"
+}
 
-const nav = {
-  display: "flex",
-  flexDirection: "column",
-  gap: 14,
-};
+const nav={
+display:"flex",
+flexDirection:"column",
+gap:10
+}
 
-const navLink = {
-  textDecoration: "none",
-  padding: "13px 16px",
-  borderRadius: 16,
-  fontSize: 15,
-  transition: "all 0.25s ease",
-};
+const logout={
+marginTop:"auto",
+padding:12,
+borderRadius:8,
+border:"none",
+background:"#ef4444",
+color:"#fff",
+cursor:"pointer"
+}
 
-const logoutBtn = {
-  marginTop: "auto",
-  padding: "14px",
-  borderRadius: 18,
-  border: "none",
-  cursor: "pointer",
-  fontSize: 15,
-  fontWeight: 700,
-  color: "#fff",
-  background: "linear-gradient(135deg,#ef4444,#b91c1c)",
-  transition: "all 0.25s ease",
-};
+const main={
+flex:1,
+display:"flex",
+flexDirection:"column",
+width:"100%"
+}
 
-const dangerShadow =
-  "rgba(239,68,68,0.6) 0px 10px 25px";
+const topbar={
+height:60,
+display:"flex",
+alignItems:"center",
+gap:15,
+padding:"0 20px",
+borderBottom:"1px solid #e5e7eb",
+background:"#ffffff"
+}
 
-const main = {
-  flex: 1,
-  padding: 30,
-};
+const menuBtn={
+fontSize:22,
+border:"none",
+background:"transparent",
+cursor:"pointer"
+}
 
-const pageCard = {
-  background: "linear-gradient(180deg,#ffffff,#f8fafc)",
-  borderRadius: 22,
-  padding: 32,
-  minHeight: "100%",
-  boxShadow: "rgba(0,0,0,0.12) 0px 15px 35px",
-};
+const content={
+padding:30,
+background:"#f9fafb",
+minHeight:"calc(100vh - 60px)"
+}

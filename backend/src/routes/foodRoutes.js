@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   getFoods,
   addFood,
@@ -14,7 +15,7 @@ const router = express.Router();
 /* GET ALL FOODS */
 router.get("/", getFoods);
 
-/* ADD FOOD (ADMIN ONLY) */
+/* ADD FOOD */
 router.post(
   "/",
   protect,
@@ -23,7 +24,7 @@ router.post(
   addFood
 );
 
-/* DELETE FOOD (ADMIN ONLY) */
+/* DELETE FOOD */
 router.delete(
   "/:id",
   protect,

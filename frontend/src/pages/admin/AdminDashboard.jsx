@@ -1,110 +1,93 @@
 import { useEffect, useState } from "react";
-import { getToken } from "../../utils/getToken";
 
-export default function AdminDashboard() {
+export default function AdminDashboard(){
 
-  const [stats,setStats] = useState({
-    users:0,
-    orders:0,
-    foods:0,
-    revenue:0
-  });
+const [stats,setStats] = useState({
+users:0,
+orders:0,
+foods:0,
+revenue:0
+});
 
-  useEffect(()=>{
-    loadStats();
-  },[]);
+useEffect(()=>{
+loadStats();
+},[]);
 
-  const loadStats = async()=>{
+const loadStats = async()=>{
 
-    const token = await getToken();
+try{
 
-    const res = await fetch("https://food-startup-1.onrender.com/api/admin/stats",{
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-    });
+const res = await fetch("http://localhost:5000/api/admin/stats");
+const data = await res.json();
 
-    const data = await res.json();
-    setStats(data);
+setStats(data);
 
-  };
-
-  return(
-
-    <div style={page}>
-
-      <h1 style={title}>👨‍💼 Admin Dashboard</h1>
-      <p style={subtitle}>Overview of your food startup</p>
-
-      <div style={grid}>
-        <StatCard title="Users" value={stats.users} color="#2563eb"/>
-        <StatCard title="Orders" value={stats.orders} color="#f97316"/>
-        <StatCard title="Foods" value={stats.foods} color="#16a34a"/>
-        <StatCard title="Revenue" value={`₹${stats.revenue}`} color="#9333ea"/>
-      </div>
-
-    </div>
-
-  );
-
+}catch(err){
+console.log(err);
 }
 
-function StatCard({title,value,color}){
+};
 
-  return(
+return(
 
-    <div style={{...card,borderLeft:`6px solid ${color}`}}>
+<div>
 
-      <p style={cardTitle}>{title}</p>
-      <h2 style={cardValue}>{value}</h2>
+<h1 style={title}>📊 Admin Dashboard</h1>
 
-    </div>
+<div style={grid}>
 
-  )
+<div style={card}>
+<h3>👥 Users</h3>
+<p style={number}>{stats.users}</p>
+</div>
+
+<div style={card}>
+<h3>📦 Orders</h3>
+<p style={number}>{stats.orders}</p>
+</div>
+
+<div style={card}>
+<h3>🍔 Foods</h3>
+<p style={number}>{stats.foods}</p>
+</div>
+
+<div style={card}>
+<h3>💰 Revenue</h3>
+<p style={number}>₹{stats.revenue}</p>
+</div>
+
+</div>
+
+</div>
+
+)
 
 }
 
 /* styles */
 
-const page={
-  padding:40,
-  background:"#f1f5f9",
-  minHeight:"100vh"
-};
-
 const title={
-  marginBottom:6,
-  color:"#0f172a"
-};
-
-const subtitle={
-  color:"#475569",
-  marginBottom:30
-};
+marginBottom:30,
+fontSize:28,
+fontWeight:700
+}
 
 const grid={
-  display:"grid",
-  gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",
-  gap:24
-};
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",
+gap:20
+}
 
 const card={
-  background:"#ffffff",
-  padding:28,
-  borderRadius:18,
-  boxShadow:"rgba(0,0,0,0.1) 0px 10px 25px"
-};
+background:"#ffffff",
+padding:24,
+borderRadius:14,
+boxShadow:"0 6px 20px rgba(0,0,0,0.08)"
+}
 
-const cardTitle={
-  margin:0,
-  fontSize:14,
-  fontWeight:600,
-  color:"#64748b"
-};
-
-const cardValue={
-  marginTop:10,
-  fontSize:32,
-  fontWeight:700,
-  color:"#0f172a"
-};
+const number={
+fontSize:28,
+fontWeight:700,
+marginTop:10,
+color:"#16a34a"
+}

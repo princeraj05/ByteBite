@@ -1,136 +1,147 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-export default function Register() {
+const API = "http://localhost:5000";
 
-  const [name,setName] = useState("");
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
+export default function Register(){
 
-  const navigate = useNavigate();
+const [name,setName] = useState("");
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
 
-  const handleRegister = async (e) => {
+const navigate = useNavigate();
 
-    e.preventDefault();
+const handleRegister = async(e)=>{
 
-    try{
+e.preventDefault();
 
-      const res = await fetch("https://food-startup-1.onrender.com/api/users/register",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          name,
-          email,
-          password
-        })
-      });
+try{
 
-      const data = await res.json();
+const res = await fetch(`${API}/api/users/register`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({ name,email,password })
+});
 
-      if(!res.ok){
-        return alert(data.message || "Registration failed");
-      }
+const data = await res.json();
 
-      alert("Registration Successful!");
-      navigate("/login");
-
-    }catch(err){
-      alert("Registration failed");
-    }
-
-  };
-
-  return (
-    <div style={page}>
-      <form style={card} onSubmit={handleRegister}>
-
-        <h2 style={title}>Register</h2>
-
-        <input
-          style={input}
-          placeholder="Full Name"
-          value={name}
-          required
-          onChange={(e)=>setName(e.target.value)}
-        />
-
-        <input
-          style={input}
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e)=>setEmail(e.target.value)}
-        />
-
-        <input
-          style={input}
-          type="password"
-          placeholder="Password"
-          value={password}
-          required
-          onChange={(e)=>setPassword(e.target.value)}
-        />
-
-        <button style={btn} type="submit">
-          Register
-        </button>
-
-        <p style={text}>
-          Already registered? <Link to="/login">Login</Link>
-        </p>
-
-      </form>
-    </div>
-  );
+if(!res.ok){
+return alert(data.message || "Registration failed");
 }
 
+alert("Registration successful!");
+navigate("/login");
+
+}catch(err){
+alert("Server error");
+}
+
+};
+
+return(
+
+<div style={page}>
+
+<form style={card} onSubmit={handleRegister}>
+
+<h2 style={title}>Register</h2>
+
+<input
+style={input}
+placeholder="Full Name"
+value={name}
+required
+onChange={(e)=>setName(e.target.value)}
+/>
+
+<input
+style={input}
+type="email"
+placeholder="Email address"
+value={email}
+required
+onChange={(e)=>setEmail(e.target.value)}
+/>
+
+<input
+style={input}
+type="password"
+placeholder="Password"
+value={password}
+required
+onChange={(e)=>setPassword(e.target.value)}
+/>
+
+<button style={btn} type="submit">
+Create Account
+</button>
+
+<p style={text}>
+Already have an account? <Link to="/login">Login</Link>
+</p>
+
+</form>
+
+</div>
+
+)
+
+}
+
+/* same styles */
+
 const page={
-  minHeight:"100vh",
-  display:"flex",
-  alignItems:"center",
-  justifyContent:"center"
+width:"100%",
+minHeight:"calc(100vh - 120px)",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+padding:"20px",
+background:"#f9fafb",
+boxSizing:"border-box"
 };
 
 const card={
-  width:360,
-  padding:32,
-  borderRadius:14,
-  background:"#ffffff",
-  boxShadow:"0 12px 30px rgba(0,0,0,0.15)"
+width:"100%",
+maxWidth:380,
+background:"#ffffff",
+padding:"30px 24px",
+borderRadius:14,
+boxShadow:"0 8px 25px rgba(0,0,0,0.08)"
 };
 
 const title={
-  textAlign:"center",
-  marginBottom:20,
-  color:"#111827",
-  fontWeight:600
+textAlign:"center",
+marginBottom:22,
+fontSize:24
 };
 
 const input={
-  width:"100%",
-  padding:12,
-  marginBottom:12,
-  borderRadius:8,
-  border:"1px solid #d1d5db",
-  fontSize:14
+width:"100%",
+padding:12,
+marginBottom:14,
+borderRadius:8,
+border:"1px solid #d1d5db",
+fontSize:14,
+boxSizing:"border-box"
 };
 
 const btn={
-  width:"100%",
-  padding:12,
-  borderRadius:8,
-  border:"none",
-  cursor:"pointer",
-  fontWeight:"bold",
-  background:"#111827",
-  color:"#ffffff"
+width:"100%",
+padding:12,
+borderRadius:8,
+border:"none",
+cursor:"pointer",
+fontWeight:600,
+background:"#16a34a",
+color:"#fff",
+fontSize:15
 };
 
 const text={
-  marginTop:12,
-  textAlign:"center",
-  color:"#374151"
+marginTop:14,
+textAlign:"center",
+fontSize:14
 };

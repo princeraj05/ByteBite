@@ -6,15 +6,17 @@ import Food from "../models/Food.js";
 const router = express.Router();
 
 /* ================= ADMIN DASHBOARD STATS ================= */
+
 router.get("/stats", async (req, res) => {
   try {
+
     const users = await User.countDocuments();
     const orders = await Order.countDocuments();
     const foods = await Food.countDocuments();
 
     const revenueAgg = await Order.aggregate([
       { $match: { status: "Delivered" } },
-      { $group: { _id: null, total: { $sum: "$total" } } },
+      { $group: { _id: null, total: { $sum: "$total" } } }
     ]);
 
     const revenue = revenueAgg[0]?.total || 0;
@@ -23,11 +25,17 @@ router.get("/stats", async (req, res) => {
       users,
       orders,
       foods,
-      revenue,
+      revenue
     });
+
   } catch (err) {
+
     console.error("Admin dashboard error:", err);
-    res.status(500).json({ message: "Server error" });
+
+    res.status(500).json({
+      message: "Server error"
+    });
+
   }
 });
 

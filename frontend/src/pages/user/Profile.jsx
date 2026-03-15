@@ -1,225 +1,224 @@
-// ================= FRONTEND =================
-// ✅ src/pages/user/Profile.jsx (Firebase removed – MongoDB API used)
+import { useEffect,useState } from "react";
 
-import { useEffect, useState } from "react";
+export default function Profile(){
 
-export default function Profile() {
+const [form,setForm] = useState({
+name:"",
+phone:"",
+address:"",
+foodPreference:"",
+deliveryTime:"",
+notifications:""
+});
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    foodPreference: "",
-    deliveryTime: "",
-    notifications: "",
-  });
+const [loading,setLoading] = useState(true);
+const [message,setMessage] = useState("");
 
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+useEffect(()=>{
 
-  useEffect(() => {
+const fetchProfile = async()=>{
 
-    const fetchProfile = async () => {
+try{
 
-      try {
+const token = localStorage.getItem("token");
 
-        const token = localStorage.getItem("token");
+const res = await fetch(
+"http://localhost:5000/api/users/me",
+{
+headers:{Authorization:`Bearer ${token}`}
+}
+);
 
-        const res = await fetch(
-          "http://localhost:5000/api/users/me",
-          {
-            headers:{
-              Authorization:`Bearer ${token}`
-            }
-          }
-        );
+const data = await res.json();
 
-        const data = await res.json();
+setForm({
+name:data.name||"",
+phone:data.phone||"",
+address:data.address||"",
+foodPreference:data.foodPreference||"",
+deliveryTime:data.deliveryTime||"",
+notifications:data.notifications||""
+});
 
-        if(data){
+}catch{
 
-          setForm({
-            name: data.name || "",
-            phone: data.phone || "",
-            address: data.address || "",
-            foodPreference: data.foodPreference || "",
-            deliveryTime: data.deliveryTime || "",
-            notifications: data.notifications || "",
-          });
+setMessage("❌ Failed to load profile");
 
-        }
-
-      } catch {
-        setMessage("❌ Failed to load profile");
-      }
-
-      setLoading(false);
-
-    };
-
-    fetchProfile();
-
-  }, []);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async () => {
-
-    try {
-
-      const token = localStorage.getItem("token");
-
-      await fetch(
-        "http://localhost:5000/api/users/profile",
-        {
-          method:"PUT",
-          headers:{
-            "Content-Type":"application/json",
-            Authorization:`Bearer ${token}`
-          },
-          body:JSON.stringify(form)
-        }
-      );
-
-      setMessage("✅ Profile updated successfully");
-
-    } catch {
-
-      setMessage("❌ Failed to update profile");
-
-    }
-
-  };
-
-  if (loading) return <p style={{ padding: 40 }}>Loading profile...</p>;
-
-  return (
-    <div style={page}>
-      <h1 style={title}>👤 My Profile</h1>
-      <p style={subtitle}>Manage your personal information</p>
-
-      {message && <p style={messageStyle}>{message}</p>}
-
-      <div style={card}>
-        <div style={grid}>
-          <Input label="Full Name" name="name" value={form.name} onChange={handleChange} />
-          <Input label="Mobile Number" name="phone" value={form.phone} onChange={handleChange} />
-          <Input label="Food Preference" name="foodPreference" value={form.foodPreference} onChange={handleChange} />
-          <Input label="Preferred Delivery Time" name="deliveryTime" value={form.deliveryTime} onChange={handleChange} />
-        </div>
-
-        <Input
-          label="Address"
-          name="address"
-          value={form.address}
-          onChange={handleChange}
-          textarea
-        />
-
-        <Input
-          label="Notifications"
-          name="notifications"
-          value={form.notifications}
-          onChange={handleChange}
-        />
-
-        <button style={btn} onClick={handleSave}>
-          💾 Save Changes
-        </button>
-      </div>
-    </div>
-  );
 }
 
-/* ================= UI HELPERS ================= */
+setLoading(false);
 
-const Input = ({ label, textarea, ...props }) => (
-  <div style={{ marginBottom: 18 }}>
-    <label style={labelStyle}>{label}</label>
-    {textarea ? (
-      <textarea {...props} style={textareaStyle} />
-    ) : (
-      <input {...props} style={inputStyle} />
-    )}
-  </div>
+};
+
+fetchProfile();
+
+},[]);
+
+const handleChange = e=>{
+setForm({...form,[e.target.name]:e.target.value});
+};
+
+const handleSave = async()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+await fetch(
+"http://localhost:5000/api/users/profile",
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify(form)
+}
+);
+
+setMessage("✅ Profile updated successfully");
+
+}catch{
+
+setMessage("❌ Failed to update profile");
+
+}
+
+};
+
+if(loading) return <p style={{padding:40}}>Loading profile...</p>;
+
+return(
+
+<div style={page}>
+
+<h1 style={title}>👤 My Profile</h1>
+<p style={subtitle}>Manage your personal information</p>
+
+{message && <p style={msg}>{message}</p>}
+
+<div style={card}>
+
+<div style={grid}>
+
+<Input label="Full Name" name="name" value={form.name} onChange={handleChange}/>
+<Input label="Mobile Number" name="phone" value={form.phone} onChange={handleChange}/>
+<Input label="Food Preference" name="foodPreference" value={form.foodPreference} onChange={handleChange}/>
+<Input label="Preferred Delivery Time" name="deliveryTime" value={form.deliveryTime} onChange={handleChange}/>
+
+</div>
+
+<Input label="Address" name="address" value={form.address} onChange={handleChange} textarea/>
+
+<Input label="Notifications" name="notifications" value={form.notifications} onChange={handleChange}/>
+
+<button style={btn} onClick={handleSave}>
+💾 Save Changes
+</button>
+
+</div>
+
+</div>
+
+);
+
+}
+
+/* INPUT COMPONENT */
+
+const Input = ({label,textarea,...props})=>(
+
+<div style={{marginBottom:18,width:"100%"}}>
+
+<label style={labelStyle}>{label}</label>
+
+{textarea ?
+
+<textarea {...props} style={textareaStyle}/>
+
+:
+
+<input {...props} style={inputStyle}/>
+
+}
+
+</div>
+
 );
 
 /* ================= STYLES ================= */
 
-const page = {
-  minHeight: "100vh",
-  padding: 40,
-  background: "#f1f5f9",
+const page={
+width:"100%",
+padding:"16px"
 };
 
-const title = {
-  color: "#0f172a",
-  marginBottom: 6,
+const title={
+marginBottom:6,
+color:"#0f172a"
 };
 
-const subtitle = {
-  color: "#64748b",
-  marginBottom: 20,
+const subtitle={
+marginBottom:20,
+color:"#64748b"
 };
 
-const messageStyle = {
-  marginBottom: 16,
-  fontWeight: 600,
+const msg={
+marginBottom:14,
+fontWeight:600
 };
 
-const card = {
-  maxWidth: 900,
-  background: "#ffffff",
-  padding: 32,
-  borderRadius: 20,
-  boxShadow:
-    "rgba(0,0,0,0.12) 0px 20px 30px, rgba(0,0,0,0.08) 0px 8px 12px",
+const card={
+maxWidth:600,
+margin:"auto",
+background:"#fff",
+padding:"20px",
+borderRadius:18,
+boxShadow:"0 8px 20px rgba(0,0,0,0.08)"
 };
 
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-  gap: 20,
+const grid={
+display:"grid",
+gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",
+gap:14
 };
 
-const labelStyle = {
-  display: "block",
-  fontSize: 14,
-  fontWeight: 600,
-  color: "#334155",
-  marginBottom: 6,
+const labelStyle={
+display:"block",
+fontSize:14,
+fontWeight:600,
+marginBottom:6,
+color:"#334155"
 };
 
-const inputStyle = {
-  width: "100%",
-  padding: 12,
-  borderRadius: 12,
-  border: "1px solid #cbd5e1",
-  fontSize: 14,
-  outline: "none",
+const inputStyle={
+width:"100%",
+padding:12,
+borderRadius:10,
+border:"1px solid #e2e8f0",
+fontSize:14,
+boxSizing:"border-box"
 };
 
-const textareaStyle = {
-  width: "100%",
-  minHeight: 90,
-  padding: 12,
-  borderRadius: 12,
-  border: "1px solid #cbd5e1",
-  fontSize: 14,
-  resize: "vertical",
+const textareaStyle={
+width:"100%",
+padding:12,
+borderRadius:10,
+border:"1px solid #e2e8f0",
+minHeight:90,
+resize:"vertical",
+boxSizing:"border-box"
 };
 
-const btn = {
-  marginTop: 24,
-  width: "100%",
-  padding: 14,
-  borderRadius: 14,
-  border: "none",
-  cursor: "pointer",
-  fontSize: 16,
-  fontWeight: 700,
-  color: "#fff",
-  background: "linear-gradient(90deg,#22c55e,#16a34a)",
+const btn={
+marginTop:20,
+width:"100%",
+padding:14,
+borderRadius:14,
+border:"none",
+cursor:"pointer",
+fontSize:16,
+fontWeight:700,
+color:"#fff",
+background:"linear-gradient(135deg,#22c55e,#16a34a)"
 };

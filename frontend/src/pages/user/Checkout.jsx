@@ -1,5 +1,5 @@
 // ================= FRONTEND =================
-// ✅ src/pages/user/Checkout.jsx (ONLY UI / STYLING UPDATED)
+// ✅ src/pages/user/Checkout.jsx (RESPONSIVE + CLEAN UI)
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -69,6 +69,7 @@ export default function Checkout() {
 
       <div style={card}>
         <label style={label}>Delivery Address</label>
+
         <textarea
           placeholder="Enter your full delivery address"
           value={address}
@@ -77,6 +78,7 @@ export default function Checkout() {
         />
 
         <label style={label}>Phone Number</label>
+
         <input
           placeholder="Enter phone number"
           value={phone}
@@ -89,10 +91,12 @@ export default function Checkout() {
             <span>Subtotal</span>
             <b>₹{subtotal}</b>
           </p>
+
           <p style={row}>
             <span>Delivery</span>
             <b>₹{deliveryCharge}</b>
           </p>
+
           <p style={totalRow}>
             <span>Total</span>
             <span>₹{total}</span>
@@ -110,24 +114,23 @@ export default function Checkout() {
 /* ================= STYLES ================= */
 
 const page = {
-  padding: 40,
+  padding: "30px 20px",
   maxWidth: 900,
   margin: "auto",
   minHeight: "100vh",
-  background: "#f1f5f9",
+  background: "#f8fafc",
 };
 
 const title = {
-  marginBottom: 24,
+  marginBottom: 25,
   color: "#0f172a",
 };
 
 const card = {
   background: "#ffffff",
-  padding: 28,
-  borderRadius: 20,
-  boxShadow:
-    "rgba(0, 0, 0, 0.1) 0px 10px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px",
+  padding: 26,
+  borderRadius: 18,
+  boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
 };
 
 const label = {
@@ -142,15 +145,13 @@ const input = {
   padding: 12,
   marginBottom: 16,
   borderRadius: 10,
-  border: "1px solid #cbd5e1",
+  border: "1px solid #e2e8f0",
   fontSize: 14,
 };
 
 const summary = {
   marginTop: 10,
   marginBottom: 20,
-  borderTop: "1px solid #e5e7eb",
-  paddingTop: 12,
 };
 
 const row = {
@@ -166,13 +167,13 @@ const totalRow = {
   marginTop: 10,
   fontSize: 18,
   fontWeight: 700,
-  color: "#14532d",
+  color: "#166534",
 };
 
 const btn = {
   width: "100%",
-  padding: 16,
-  borderRadius: 16,
+  padding: 14,
+  borderRadius: 14,
   border: "none",
   cursor: "pointer",
   fontWeight: 700,
