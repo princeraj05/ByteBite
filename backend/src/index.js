@@ -25,7 +25,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://food-startup-87cmt5e11-princes-projects-d7be7534.vercel.app"
+      /https:\/\/.*\.vercel\.app$/   // ✅ all vercel domains allowed
     ],
     methods: ["GET","POST","PUT","DELETE"],
     credentials: true

@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 /* ================= REGISTER ================= */
 
 export const registerUser = async (req, res) => {
-
   try {
 
     const { name, email, password } = req.body;
@@ -20,7 +19,7 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword
@@ -32,20 +31,16 @@ export const registerUser = async (req, res) => {
     });
 
   } catch (err) {
-
     res.status(500).json({
       message: "Server error"
     });
-
   }
-
 };
 
 
 /* ================= LOGIN ================= */
 
 export const loginUser = async (req, res) => {
-
   try {
 
     const { email, password } = req.body;
@@ -72,7 +67,7 @@ export const loginUser = async (req, res) => {
         email: user.email,
         role: user.role
       },
-      "SECRET123",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -83,13 +78,10 @@ export const loginUser = async (req, res) => {
     });
 
   } catch (err) {
-
     res.status(500).json({
       message: "Server error"
     });
-
   }
-
 };
 
 

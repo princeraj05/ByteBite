@@ -10,10 +10,7 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/register", registerUser);
-
 router.post("/login", loginUser);
-
-/* ✅ FIXED */
 router.get("/me", protect, getMe);
 
 export default router;
