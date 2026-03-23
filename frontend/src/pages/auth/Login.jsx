@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import API from "../api/axios"; // ✅ NEW
+import API from "../../api/axios"; // ✅ FIXED PATH
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +13,6 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      // ✅ AXIOS CALL
       const res = await API.post("/api/users/login", {
         email,
         password,
