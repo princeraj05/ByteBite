@@ -21,16 +21,35 @@ const app = express();
 
 /* ================= MIDDLEWARE ================= */
 
+// ✅ Allowed origins list
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://byte-bite-pi.vercel.app", // 👈 YOUR MAIN FRONTEND URL (IMPORTANT)
+];
+
+// ✅ CORS FIX (best practice)
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      /https:\/\/.*\.vercel\.app$/   // ✅ all vercel domains allowed
-    ],
-    methods: ["GET","POST","PUT","DELETE"],
-    credentials: true
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps / postman)
+      if (!origin) return callback(null, true);
+
+      if (
+        allowedOrigins.includes(origin) ||
+        /https:\/\/.*\.vercel\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
+
+// ✅ Handle preflight requests
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -49,6 +68,22 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/contacts", adminContactRoutes);
 
 app.use("/api/contact", contactRoutes);
+
+/* ================= TEST ROUTE ================= */
+// 🔥 connection test ke liye
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+
+/* ================= ERROR HANDLER ================= */
+
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
+});
 
 /* ================= SERVER ================= */
 
