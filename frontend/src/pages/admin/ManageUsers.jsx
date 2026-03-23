@@ -1,195 +1,128 @@
 import { useEffect, useState } from "react";
+import API from "../../api/axios"; // ✅ NEW
 import { getToken } from "../../utils/getToken";
-
-const API = "http://localhost:5000";
 
 export default function ManageUsers(){
 
-const [users,setUsers] = useState([]);
+  const [users,setUsers] = useState([]);
 
-useEffect(()=>{
-loadUsers();
-},[]);
+  useEffect(()=>{
+    loadUsers();
+  },[]);
 
-const loadUsers = async()=>{
+  const loadUsers = async()=>{
+    try{
+      const token = await getToken();
 
-const token = await getToken();
+      const res = await API.get("/api/admin/users",{
+        headers:{ Authorization:`Bearer ${token}` }
+      });
 
-const res = await fetch(`${API}/api/admin/users`,{
-headers:{Authorization:`Bearer ${token}`}
-});
+      setUsers(res.data);
 
-const data = await res.json();
-setUsers(data);
+    }catch(err){
+      console.log(err);
+    }
+  };
 
-};
+  const changeStatus = async(id,status)=>{
+    try{
+      const token = await getToken();
 
-const changeStatus = async(id,status)=>{
+      await API.put(`/api/admin/users/${id}/status`,
+        { status },
+        {
+          headers:{ Authorization:`Bearer ${token}` }
+        }
+      );
 
-const token = await getToken();
+      loadUsers();
 
-await fetch(`${API}/api/admin/users/${id}/status`,{
-method:"PUT",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`
-},
-body:JSON.stringify({status})
-});
+    }catch(err){
+      console.log(err);
+    }
+  };
 
-loadUsers();
+  return(
 
-};
+    <div style={page}>
 
-return(
+      <h2 style={title}>👥 Manage Users</h2>
 
-<div style={page}>
+      <div style={tableWrap}>
 
-<h2 style={title}>👥 Manage Users</h2>
+        <div style={tableContainer}>
 
-<div style={tableWrap}>
+          <table style={table}>
 
-<div style={tableContainer}>
+            <thead>
+              <tr>
+                <th style={th}>Name</th>
+                <th style={th}>Email</th>
+                <th style={th}>Status</th>
+                <th style={th}>Action</th>
+              </tr>
+            </thead>
 
-<table style={table}>
+            <tbody>
 
-<thead>
+              {users.map(u=>(
 
-<tr>
-<th style={th}>Name</th>
-<th style={th}>Email</th>
-<th style={th}>Status</th>
-<th style={th}>Action</th>
-</tr>
+                <tr key={u._id} style={row}>
 
-</thead>
+                  <td style={td}>{u.name}</td>
 
-<tbody>
+                  <td style={{...td,color:"#64748b"}}>
+                    {u.email}
+                  </td>
 
-{users.map(u=>(
+                  <td style={td}>
 
-<tr key={u._id} style={row}>
+                    <span
+                      style={{
+                        ...statusBadge,
+                        background:
+                          u.status==="Active"?"#dcfce7":"#fee2e2",
+                        color:
+                          u.status==="Active"?"#166534":"#991b1b"
+                      }}
+                    >
+                      {u.status || "Active"}
+                    </span>
 
-<td style={td}>{u.name}</td>
+                  </td>
 
-<td style={{...td,color:"#64748b"}}>
-{u.email}
-</td>
+                  <td style={td}>
 
-<td style={td}>
+                    <button
+                      style={{
+                        ...btn,
+                        background:
+                          u.status==="Active"?"#ef4444":"#16a34a"
+                      }}
+                      onClick={()=>changeStatus(
+                        u._id,
+                        u.status==="Active"?"Blocked":"Active"
+                      )}
+                    >
+                      {u.status==="Active"?"Block":"Unblock"}
+                    </button>
 
-<span
-style={{
-...statusBadge,
-background:
-u.status==="Active"?"#dcfce7":"#fee2e2",
-color:
-u.status==="Active"?"#166534":"#991b1b"
-}}
->
-{u.status || "Active"}
-</span>
+                  </td>
 
-</td>
+                </tr>
 
-<td style={td}>
+              ))}
 
-<button
-style={{
-...btn,
-background:
-u.status==="Active"?"#ef4444":"#16a34a"
-}}
-onClick={()=>changeStatus(
-u._id,
-u.status==="Active"?"Blocked":"Active"
-)}
->
-{u.status==="Active"?"Block":"Unblock"}
-</button>
+            </tbody>
 
-</td>
+          </table>
 
-</tr>
+        </div>
 
-))}
+      </div>
 
-</tbody>
+    </div>
 
-</table>
-
-</div>
-
-</div>
-
-</div>
-
-)
-
+  )
 }
-
-/* ================= STYLES ================= */
-
-const page={
-width:"100%",
-maxWidth:1100,
-margin:"0 auto",
-padding:"10px"
-};
-
-const title={
-marginBottom:20,
-fontSize:22,
-fontWeight:700
-};
-
-const tableWrap={
-background:"#ffffff",
-borderRadius:12,
-padding:16,
-boxShadow:"0 4px 14px rgba(0,0,0,0.08)"
-};
-
-const tableContainer={
-width:"100%",
-overflowX:"auto"
-};
-
-const table={
-width:"100%",
-borderCollapse:"collapse",
-minWidth:500
-};
-
-const th={
-textAlign:"left",
-padding:"12px",
-borderBottom:"1px solid #e2e8f0",
-fontSize:14
-};
-
-const td={
-padding:"12px",
-borderBottom:"1px solid #f1f5f9",
-fontSize:14
-};
-
-const row={
-background:"#fff"
-};
-
-const statusBadge={
-padding:"6px 12px",
-borderRadius:16,
-fontSize:12,
-fontWeight:600
-};
-
-const btn={
-padding:"6px 12px",
-borderRadius:6,
-border:"none",
-cursor:"pointer",
-color:"#fff",
-fontWeight:600
-};
