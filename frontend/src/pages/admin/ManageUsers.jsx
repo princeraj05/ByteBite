@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API from "../../api/axios"; // ✅ NEW
+import API from "../../api/axios";
 import { getToken } from "../../utils/getToken";
 
 export default function ManageUsers(){
@@ -45,80 +45,72 @@ export default function ManageUsers(){
 
   return(
 
-    <div style={page}>
+    <div className="max-w-6xl mx-auto px-4 py-6">
 
-      <h2 style={title}>👥 Manage Users</h2>
+      <h2 className="text-2xl font-bold mb-6">👥 Manage Users</h2>
 
-      <div style={tableWrap}>
+      <div className="bg-white rounded-2xl shadow-md overflow-x-auto">
 
-        <div style={tableContainer}>
+        <table className="min-w-full text-sm">
 
-          <table style={table}>
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              <th className="text-left px-4 py-3">Name</th>
+              <th className="text-left px-4 py-3">Email</th>
+              <th className="text-left px-4 py-3">Status</th>
+              <th className="text-left px-4 py-3">Action</th>
+            </tr>
+          </thead>
 
-            <thead>
-              <tr>
-                <th style={th}>Name</th>
-                <th style={th}>Email</th>
-                <th style={th}>Status</th>
-                <th style={th}>Action</th>
+          <tbody>
+
+            {users.map(u=>(
+
+              <tr key={u._id} className="border-b">
+
+                <td className="px-4 py-3 font-medium">{u.name}</td>
+
+                <td className="px-4 py-3 text-gray-500">
+                  {u.email}
+                </td>
+
+                <td className="px-4 py-3">
+
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    u.status==="Active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}>
+                    {u.status || "Active"}
+                  </span>
+
+                </td>
+
+                <td className="px-4 py-3">
+
+                  <button
+                    onClick={()=>changeStatus(
+                      u._id,
+                      u.status==="Active"?"Blocked":"Active"
+                    )}
+                    className={`px-3 py-1 rounded-lg text-white text-xs font-semibold ${
+                      u.status==="Active"
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    }`}
+                  >
+                    {u.status==="Active"?"Block":"Unblock"}
+                  </button>
+
+                </td>
+
               </tr>
-            </thead>
 
-            <tbody>
+            ))}
 
-              {users.map(u=>(
+          </tbody>
 
-                <tr key={u._id} style={row}>
-
-                  <td style={td}>{u.name}</td>
-
-                  <td style={{...td,color:"#64748b"}}>
-                    {u.email}
-                  </td>
-
-                  <td style={td}>
-
-                    <span
-                      style={{
-                        ...statusBadge,
-                        background:
-                          u.status==="Active"?"#dcfce7":"#fee2e2",
-                        color:
-                          u.status==="Active"?"#166534":"#991b1b"
-                      }}
-                    >
-                      {u.status || "Active"}
-                    </span>
-
-                  </td>
-
-                  <td style={td}>
-
-                    <button
-                      style={{
-                        ...btn,
-                        background:
-                          u.status==="Active"?"#ef4444":"#16a34a"
-                      }}
-                      onClick={()=>changeStatus(
-                        u._id,
-                        u.status==="Active"?"Blocked":"Active"
-                      )}
-                    >
-                      {u.status==="Active"?"Block":"Unblock"}
-                    </button>
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
-        </div>
+        </table>
 
       </div>
 
